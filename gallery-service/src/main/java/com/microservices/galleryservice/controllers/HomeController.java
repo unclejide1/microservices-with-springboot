@@ -1,6 +1,7 @@
 package com.microservices.galleryservice.controllers;
 
 import com.microservices.galleryservice.entities.Gallery;
+import com.netflix.hystrix.contrib.javanica.annotation.HystrixCommand;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -37,7 +38,7 @@ public class HomeController {
 		return "Hello from Gallery Service running at port: " + env.getProperty("local.server.port");
 	}
   
-//	@HystrixCommand(fallbackMethod = "fallback")
+	@HystrixCommand(fallbackMethod = "fallback")
 	@RequestMapping("/{id}")
 	public Gallery getGallery(@PathVariable final int id) {
 		LOGGER.info("Creating gallery object ... ");
@@ -47,7 +48,7 @@ public class HomeController {
 		gallery.setId(id);
 
 		// get list of available images 
-		// @SuppressWarnings("unchecked")    // we'll throw an exception from image service to simulate a failure
+		 @SuppressWarnings("unchecked")    // we'll throw an exception from image service to simulate a failure
 		List<Object> images = restTemplate.getForObject("http://image-service/images/", List.class);
 		gallery.setImages(images);
 	
